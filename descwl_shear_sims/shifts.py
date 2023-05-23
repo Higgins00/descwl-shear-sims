@@ -273,3 +273,4 @@ def get_pair_shifts(*, rng, sep):
     shifts['dy'][1] = dy2
 
     return shifts
+

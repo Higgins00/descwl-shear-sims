@@ -2,6 +2,7 @@ from copy import deepcopy
 import esutil as eu
 import galsim
 import numpy as np
+import pandas as pd
 
 import lsst.afw.image as afw_image
 from lsst.afw.cameraGeom.testUtils import DetectorWrapper
@@ -21,7 +22,7 @@ from .wcs import make_wcs, make_dm_wcs, make_coadd_dm_wcs
 
 
 DEFAULT_SIM_CONFIG = {
-    "gal_type": "fixed",  # note "exp" also means "fixed" for back compat
+    "gal_type": "fixed",  # note "exp" also means "fixed" for back compat, 'ia'
     "psf_type": "gauss",
     "psf_dim": 51,
     "psf_variation_factor": 1,  # for power spectrum psf
@@ -78,7 +79,7 @@ def make_sim(
     rng: numpy.random.RandomState
         Numpy random state
     galaxy_catalog: catalog
-        E.g. WLDeblendGalaxyCatalog or FixedGalaxyCatalog
+        E.g. WLDeblendGalaxyCatalog or FixedGalaxyCatalog or IAGalaxyCatalog
     coadd_dim: int
         Default 351
     g1: float
@@ -696,3 +697,4 @@ def get_bright_info_struct():
         ('has_bleed', bool),
     ]
     return np.zeros(1, dtype=dt)
+df

@@ -6,7 +6,7 @@ def get_objlist(*, galaxy_catalog, survey, star_catalog=None, noise=None):
     Parameters
     ----------
     galaxy_catalog: catalog
-        e.g. WLDeblendGalaxyCatalog
+        e.g. WLDeblendGalaxyCatalog, IAGalaxyCatalog
     survey: descwl Survey
         For the appropriate band
     star_catalog: catalog
