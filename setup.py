@@ -18,5 +18,5 @@ setup(
     include_package_data=True,
     author='Matthew R. Becker',
     author_email='becker.mr@gmail.com',
-    url='https://github.com/LSSTDESC/descwl-shear-sims',
+    url='https://github.com/Higgins00/descwl-shear-sims',
 )

@@ -26,7 +26,7 @@ def get_survey(*, gal_type, band):
         survey = WLDeblendSurvey(band=band)
     elif gal_type in ['fixed', 'varying']:
         survey = BasicSurvey(band=band)
-    elif gal_type = 'ia':
+    elif gal_type == 'ia':
         survey = WLDeblendSurvey(band=band)
     else:
         raise ValueError("bad gal_type: '%s'" % gal_type)
@@ -72,6 +72,8 @@ def get_wldeblend_rescale_fac(survey):
     """
     s_zp = survey.zero_point
     s_et = survey.exposure_time
+    # following
+    # https://github.com/LSSTDESC/WeakLensingDeblending/blob/228c6655d63de9edd9bf2c8530f99199ee47fc5e/descwl/survey.py#L143
     return 10.0**(0.4*(ZERO_POINT - 24.0))/s_zp/s_et
 
 
