@@ -45,7 +45,7 @@ def make_wcs(*, scale, image_origin, world_origin, theta=None):
     )
 
 
-def make_coadd_wcs(coadd_dim):
+def make_coadd_wcs(coadd_dim,world_origin = WORLD_ORIGIN):
     """
     make a coadd wcs, using the default world origin
 
@@ -64,5 +64,5 @@ def make_coadd_wcs(coadd_dim):
     return make_wcs(
         scale=SCALE,
         image_origin=coadd_origin,
-        world_origin=WORLD_ORIGIN,
+        world_origin=world_origin,
     )

@@ -63,7 +63,7 @@ def make_dm_wcs(galsim_wcs):
     return stack_wcs
 
 
-def make_coadd_dm_wcs(coadd_dim):
+def make_coadd_dm_wcs(coadd_dim,world_origin = WORLD_ORIGIN):
     """
     make a coadd wcs, using the default world origin.  Create
     a bbox within larger box
@@ -99,7 +99,7 @@ def make_coadd_dm_wcs(coadd_dim):
         make_wcs(
             scale=SCALE,
             image_origin=gs_coadd_origin,
-            world_origin=WORLD_ORIGIN,
+            world_origin=world_origin,
         )
     )
     return coadd_wcs, coadd_bbox

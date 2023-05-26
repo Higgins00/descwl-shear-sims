@@ -10,7 +10,7 @@ from lsst.afw.cameraGeom.testUtils import DetectorWrapper
 from .lsst_bits import get_flagval
 from .saturation import saturate_image_and_mask, BAND_SAT_VALS
 from .surveys import get_survey, rescale_wldeblend_exp
-from .constants import SCALE, ZERO_POINT
+from .constants import SCALE, ZERO_POINT, WORLD_ORIGIN
 from .artifacts import add_bleed, get_max_mag_with_bleed
 from .masking import (
     get_bmask_and_set_image,
@@ -71,6 +71,7 @@ def make_sim(
     sky_n_sigma=None,
     draw_method='auto',
     theta0=0.,
+    world_origin = WORLD_ORIGIN
 ):
     """
     Make simulation data
@@ -137,7 +138,7 @@ def make_sim(
             has_bleed: bool, True if there is a bleed trail
     """
 
-    coadd_wcs, coadd_bbox = make_coadd_dm_wcs(coadd_dim)
+    coadd_wcs, coadd_bbox = make_coadd_dm_wcs(coadd_dim, world_origin)
     coadd_bbox_cen_gs_skypos = get_coadd_center_gs_pos(
         coadd_wcs=coadd_wcs, coadd_bbox=coadd_bbox,
     )
@@ -206,7 +207,11 @@ def make_sim(
                     survey=survey.descwl_survey,
                     exp=exp,
                 )
-
+            if galaxy_catalog.gal_type == 'ia':
+                rescale_wldeblend_exp(
+                    survey=survey.descwl_survey,
+                    exp=exp,
+                )
             # mark high pixels SAT and also set sat value in image for
             # any pixels already marked SAT
             saturate_image_and_mask(
