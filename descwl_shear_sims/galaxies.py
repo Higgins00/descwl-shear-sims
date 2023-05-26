@@ -7,6 +7,7 @@ from galsim import DeVaucouleurs
 from galsim import Exponential
 import descwl
 import pandas as pd
+import math
 
 from .shifts import get_shifts, get_pair_shifts
 from .constants import SCALE
@@ -790,16 +791,17 @@ class IAGalaxyCatalog(object):
         #finding shifts based on coadd wcs
         ras = self._ia_cat['ra_gal'].values
         decs = self._ia_cat['dec_gal'].values
-        x,y = wcs.posToImage(galsim.CelestialCoord(ras * galsim.degrees, decs * galsim.degrees))
+        x,y = wcs.radecToxy(ras, decs, units=galsim.degrees)
         cen = (coadd_dim-1)/2
         lims = ((coadd_dim - 2*buff)*SCALE/60)/2
-        self.im_mask = np.where((x>(cen-lims))&(x<(cen+lims))&(y>(cen-lims))&(y<(cen+lims)))
-        self.gal_ids = self._ia_cat['unique_gal_id'][im_mask[0]]
+        self.im_mask = np.where((x>(cen-cen))&(x<(cen+cen))&(y>(cen-cen))&(y<(cen+cen)))
+        self.gal_ids = self._ia_cat['unique_gal_id'][self.im_mask[0]]
+        size = len(self.im_mask[0])
         
         shifts = np.zeros(size, dtype=[('dx', 'f8'), ('dy', 'f8')])
 
-        shifts['dx'] = x[im_mask[0]]
-        shifts['dy'] = y[im_mask[0]]
+        shifts['dx'] = x[self.im_mask[0]]
+        shifts['dy'] = y[self.im_mask[0]]
 
         self.shifts_array = shifts
 
