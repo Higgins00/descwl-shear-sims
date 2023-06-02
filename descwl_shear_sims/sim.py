@@ -214,12 +214,13 @@ def make_sim(
                 )
             # mark high pixels SAT and also set sat value in image for
             # any pixels already marked SAT
-            saturate_image_and_mask(
-                image=exp.image.array,
-                bmask=exp.mask.array,
-                sat_val=BAND_SAT_VALS[band],
-                flagval=get_flagval('SAT'),
-            )
+            #--------------fix for des magnitudes later
+#             saturate_image_and_mask(
+#                 image=exp.image.array,
+#                 bmask=exp.mask.array,
+#                 sat_val=BAND_SAT_VALS[band],
+#                 flagval=get_flagval('SAT'),
+#             )
 
             bdata_list.append(exp)
 
@@ -475,18 +476,19 @@ def _draw_objects(
             shift = shift.shear(shear)
 
         # Deproject from u,v onto sphere. Then use wcs to get to image pos.
-        world_pos = coadd_bbox_cen_gs_skypos.deproject(
-            shift.x * galsim.arcsec,
-            shift.y * galsim.arcsec,
-        )
-
+#         world_pos = coadd_bbox_cen_gs_skypos.deproject(
+#             shift.x * galsim.arcsec,
+#             shift.y * galsim.arcsec,
+#         )
+        world_pos = wcs.toWorld(galsim.PositionD(shift.x,shift.y))
         image_pos = wcs.toImage(world_pos)
         local_wcs = wcs.local(image_pos=image_pos)
 
         convolved_object = get_convolved_object(obj, psf, image_pos)
 
         stamp = convolved_object.drawImage(
-            center=image_pos, wcs=local_wcs, method=draw_method, **kw
+            center=image_pos, wcs=local_wcs, method=draw_method, 
+            nx=convolved_object.getGoodImageSize(SCALE), ny=convolved_object.getGoodImageSize(SCALE), **kw
         )
 
         b = stamp.bounds & image.bounds

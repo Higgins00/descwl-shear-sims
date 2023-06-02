@@ -893,11 +893,11 @@ def read_ia_cat():
     """
     fname = os.path.join(
         os.environ.get('MICE_DIR', '.'),
-        '12365.parquet',
+        '14322.parquet',
     )
 
  
-    cat = pd.read_parquet('12365.parquet')
+    cat = pd.read_parquet('14322.parquet')
     return cat
 
 class IAGalaxyBuilder(object):
