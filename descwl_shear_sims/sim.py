@@ -177,7 +177,7 @@ def make_sim(
                 noise=noise_per_epoch,
                 objlist=lists['objlist'],
                 shifts=lists['shifts'],
-                dim=se_dim,
+                dim=coadd_dim,
                 psf=psf,
                 psf_dim=psf_dim,
                 g1=g1, g2=g2,
@@ -197,6 +197,7 @@ def make_sim(
                 sky_n_sigma=sky_n_sigma,
                 draw_method=draw_method,
                 theta0=theta0,
+                world_origin=_world_origin
             )
             if epoch == 0:
                 bright_info += this_bright_info
@@ -215,12 +216,12 @@ def make_sim(
             # mark high pixels SAT and also set sat value in image for
             # any pixels already marked SAT
             #--------------fix for des magnitudes later
-#             saturate_image_and_mask(
-#                 image=exp.image.array,
-#                 bmask=exp.mask.array,
-#                 sat_val=BAND_SAT_VALS[band],
-#                 flagval=get_flagval('SAT'),
-#             )
+            saturate_image_and_mask(
+                image=exp.image.array,
+                bmask=exp.mask.array,
+                sat_val=BAND_SAT_VALS[band],
+                flagval=get_flagval('SAT'),
+            )
 
             bdata_list.append(exp)
 
@@ -265,7 +266,8 @@ def make_exp(
     star_bleeds=False,
     sky_n_sigma=None,
     draw_method='auto',
-    theta0=0.
+    theta0=0.,
+    world_origin = WORLD_ORIGIN
 ):
     """
     Make an SEObs
@@ -338,7 +340,7 @@ def make_exp(
     """
 
     shear = galsim.Shear(g1=g1, g2=g2)
-    dims = [dim]*2
+    dims = [dim]#*2
     # I think Galsim uses 1 offset. An array with length=dim=5
     # The center is at 3=(5+1)/2
     cen = (np.array(dims)+1)/2
@@ -360,7 +362,7 @@ def make_exp(
         scale=SCALE,
         theta=theta,
         image_origin=se_origin,
-        world_origin=coadd_bbox_cen_gs_skypos,
+        world_origin=world_origin,
     )
 
     image = galsim.Image(dim, dim, wcs=se_wcs)
@@ -368,7 +370,7 @@ def make_exp(
     _draw_objects(
         image,
         objlist, shifts, psf, draw_method,
-        coadd_bbox_cen_gs_skypos,
+        world_origin,
         rng,
         shear=shear,
         theta0=theta0,
@@ -549,11 +551,7 @@ def _draw_bright_objects(
         # photon shooting reduces these sharp edges, reducing
         # sensitivity to such an error
 
-        world_pos = coadd_bbox_cen_gs_skypos.deproject(
-            shift.x * galsim.arcsec,
-            shift.y * galsim.arcsec,
-        )
-
+        world_pos = wcs.toWorld(galsim.PositionD(shift.x,shift.y))
         image_pos = wcs.toImage(world_pos)
         local_wcs = wcs.local(image_pos=image_pos)
 

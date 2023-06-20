@@ -944,8 +944,8 @@ class IAGalaxyBuilder(object):
         """
         # Calculate the object's total flux in detected electrons.
         try:
-            ab_magnitude = entry['des_asahi_full_' + filter_band + '_abs_mag']
-            ri_color = entry['des_asahi_full_r_abs_mag'] - entry['des_asahi_full_i_abs_mag']
+            ab_magnitude = entry['des_asahi_full_' + filter_band + '_true']
+            ri_color = entry['des_asahi_full_r_true'] - entry['des_asahi_full_i_true']
         except KeyError:
             raise RuntimeError('Catalog entry is missing required AB magnitudes.')
         total_flux = self.survey.get_flux(ab_magnitude)
