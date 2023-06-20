@@ -197,7 +197,7 @@ def make_sim(
                 sky_n_sigma=sky_n_sigma,
                 draw_method=draw_method,
                 theta0=theta0,
-                world_origin=_world_origin
+                world_origin= world_origin
             )
             if epoch == 0:
                 bright_info += this_bright_info
