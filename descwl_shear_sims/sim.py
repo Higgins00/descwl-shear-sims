@@ -177,7 +177,7 @@ def make_sim(
                 noise=noise_per_epoch,
                 objlist=lists['objlist'],
                 shifts=lists['shifts'],
-                dim=coadd_dim,
+                dim=se_dim,
                 psf=psf,
                 psf_dim=psf_dim,
                 g1=g1, g2=g2,
@@ -340,12 +340,12 @@ def make_exp(
     """
 
     shear = galsim.Shear(g1=g1, g2=g2)
-    dims = [dim,dim]#*2
+    dims = [dim]*2
     # I think Galsim uses 1 offset. An array with length=dim=5
     # The center is at 3=(5+1)/2
     cen = (np.array(dims)+1)/2
 
-    se_origin = galsim.PositionD(x=cen[1], y=cen[0])
+    se_origin = galsim.PositionD(x=cen[0], y=cen[0])
     if dither:
         dither_range = 0.5
         off = rng.uniform(low=-dither_range, high=dither_range, size=2)
