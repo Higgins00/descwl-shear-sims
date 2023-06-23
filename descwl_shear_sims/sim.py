@@ -177,7 +177,7 @@ def make_sim(
                 noise=noise_per_epoch,
                 objlist=lists['objlist'],
                 shifts=lists['shifts'],
-                dim=se_dim,
+                dim=coadd_dim,
                 psf=psf,
                 psf_dim=psf_dim,
                 g1=g1, g2=g2,
@@ -370,7 +370,7 @@ def make_exp(
     _draw_objects(
         image,
         objlist, shifts, psf, draw_method,
-        world_origin,
+        coadd_bbox_cen_gs_skypos,
         rng,
         shear=shear,
         theta0=theta0,
