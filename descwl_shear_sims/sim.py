@@ -177,7 +177,7 @@ def make_sim(
                 noise=noise_per_epoch,
                 objlist=lists['objlist'],
                 shifts=lists['shifts'],
-                dim=coadd_dim,
+                dim=se_dim,
                 psf=psf,
                 psf_dim=psf_dim,
                 g1=g1, g2=g2,
@@ -197,7 +197,6 @@ def make_sim(
                 sky_n_sigma=sky_n_sigma,
                 draw_method=draw_method,
                 theta0=theta0,
-                world_origin= world_origin
             )
             if epoch == 0:
                 bright_info += this_bright_info
@@ -266,8 +265,7 @@ def make_exp(
     star_bleeds=False,
     sky_n_sigma=None,
     draw_method='auto',
-    theta0=0.,
-    world_origin = WORLD_ORIGIN
+    theta0=0.
 ):
     """
     Make an SEObs
@@ -345,7 +343,7 @@ def make_exp(
     # The center is at 3=(5+1)/2
     cen = (np.array(dims)+1)/2
 
-    se_origin = galsim.PositionD(x=cen[0], y=cen[0])
+    se_origin = galsim.PositionD(x=cen[1], y=cen[0])
     if dither:
         dither_range = 0.5
         off = rng.uniform(low=-dither_range, high=dither_range, size=2)
@@ -362,7 +360,7 @@ def make_exp(
         scale=SCALE,
         theta=theta,
         image_origin=se_origin,
-        world_origin=world_origin,
+        world_origin=coadd_bbox_cen_gs_skypos,
     )
 
     image = galsim.Image(dim, dim, wcs=se_wcs)
@@ -551,7 +549,11 @@ def _draw_bright_objects(
         # photon shooting reduces these sharp edges, reducing
         # sensitivity to such an error
 
-        world_pos = wcs.toWorld(galsim.PositionD(shift.x,shift.y))
+        world_pos = coadd_bbox_cen_gs_skypos.deproject(
+            shift.x * galsim.arcsec,
+            shift.y * galsim.arcsec,
+        )
+
         image_pos = wcs.toImage(world_pos)
         local_wcs = wcs.local(image_pos=image_pos)
 
@@ -753,4 +755,3 @@ def _roate_pos(pos, theta):
     x2 = cost*x - sint*y
     y2 = sint*x + cost*y
     return galsim.PositionD(x=x2, y=y2)
-
