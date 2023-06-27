@@ -370,7 +370,7 @@ def make_exp(
         world_origin=coadd_bbox_cen_gs_skypos,
     )
     wcss = make_coadd_wcs(coadd_dim = coadd_dim,world_origin = world_origin)
-    image = galsim.Image(dim, dim, wcs=wcss)
+    image = galsim.Image(dim, dim, wcs=se_wcs)
 
     _draw_objects(
         image,
@@ -422,8 +422,8 @@ def make_exp(
     else:
         bright_info = []
     
-    dm_wcs = make_dm_wcs(wcss)
-    dm_psf = make_dm_psf(psf=psf, psf_dim=psf_dim, wcs=wcss)
+    dm_wcs = make_dm_wcs(se_wcs)
+    dm_psf = make_dm_psf(psf=psf, psf_dim=psf_dim, wcs=se_wcs)
 
     variance = image.copy()
     variance.array[:, :] = noise**2
