@@ -84,13 +84,15 @@ def make_coadd_dm_wcs(coadd_dim,world_origin = WORLD_ORIGIN):
     big_coadd_bbox = Box2I(Point2I(0), Extent2I(big_coadd_dim))
 
     # make this coadd a subset of larger coadd
-    xoff = 1000
-    yoff = 450
+#     xoff = 1000
+#     yoff = 450
+    xoff = 0
+    yoff = 0
     coadd_bbox = Box2I(Point2I(xoff, yoff), Extent2I(coadd_dim))
 
     # center the coadd wcs in the bigger coord system
-    coadd_origin = big_coadd_bbox.getCenter()
-
+    #coadd_origin = big_coadd_bbox.getCenter()
+    coadd_origin = coadd_bbox.getCenter()
     gs_coadd_origin = galsim.PositionD(
         x=coadd_origin.x,
         y=coadd_origin.y,
