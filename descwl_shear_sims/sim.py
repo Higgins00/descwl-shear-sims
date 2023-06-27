@@ -362,14 +362,15 @@ def make_exp(
         theta = None
 
     # galsim wcs
+    
     se_wcs = make_wcs(
         scale=SCALE,
         theta=theta,
         image_origin=se_origin,
         world_origin=coadd_bbox_cen_gs_skypos,
     )
-
-    image = galsim.Image(dim, dim, wcs=se_wcs)
+    wcss = make_coadd_wcs(coadd_dim = coadd_dim,world_origin = world_origin)
+    image = galsim.Image(dim, dim, wcs=wcss)
 
     _draw_objects(
         image,
@@ -420,7 +421,7 @@ def make_exp(
         )
     else:
         bright_info = []
-    wcss = make_coadd_wcs(coadd_dim = coadd_dim,world_origin = world_origin)
+    
     dm_wcs = make_dm_wcs(wcss)
     dm_psf = make_dm_psf(psf=psf, psf_dim=psf_dim, wcs=wcss)
 
