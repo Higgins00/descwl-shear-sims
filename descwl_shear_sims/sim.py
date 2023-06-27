@@ -19,6 +19,7 @@ from .masking import (
 from .objlists import get_objlist
 from .psfs import make_dm_psf
 from .wcs import make_wcs, make_dm_wcs, make_coadd_dm_wcs
+from .wcs.wcstools import make_coadd_wcs
 
 
 DEFAULT_SIM_CONFIG = {
@@ -149,6 +150,7 @@ def make_sim(
     band_data = {}
     bright_info = []
     se_wcs = []
+    
     for band in bands:
 
         survey = get_survey(gal_type=galaxy_catalog.gal_type, band=band)
@@ -197,6 +199,8 @@ def make_sim(
                 sky_n_sigma=sky_n_sigma,
                 draw_method=draw_method,
                 theta0=theta0,
+                coadd_dim = coadd_dim,
+                world_origin = world_origin,
             )
             if epoch == 0:
                 bright_info += this_bright_info
@@ -265,7 +269,9 @@ def make_exp(
     star_bleeds=False,
     sky_n_sigma=None,
     draw_method='auto',
-    theta0=0.
+    theta0=0.,
+    coadd_dim,
+    world_origin= WORLD_ORIGIN
 ):
     """
     Make an SEObs
@@ -414,9 +420,9 @@ def make_exp(
         )
     else:
         bright_info = []
-
-    dm_wcs = make_dm_wcs(se_wcs)
-    dm_psf = make_dm_psf(psf=psf, psf_dim=psf_dim, wcs=se_wcs)
+    wcss = make_coadd_wcs(coadd_dim = coadd_dim,world_origin = world_origin)
+    dm_wcs = make_dm_wcs(wcss)
+    dm_psf = make_dm_psf(psf=psf, psf_dim=psf_dim, wcs=wcss)
 
     variance = image.copy()
     variance.array[:, :] = noise**2
