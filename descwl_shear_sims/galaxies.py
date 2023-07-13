@@ -975,8 +975,7 @@ class IAGalaxyBuilder(object):
         # Calculate shapes hlr = sqrt(a*b) and q = b/a of Sersic components.
         if disk_flux > 0:
             if self.ia_angles == True:
-                disk_q = (1 - np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))/
-                (1+np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))
+                disk_q = (1 - np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))/(1+np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))
             else:
                 disk_q = entry['disk_axis_ratio']
             a_d,b_d = entry['disk_length']/2,disk_q*(entry['disk_length']/2)
@@ -986,8 +985,7 @@ class IAGalaxyBuilder(object):
             disk_hlr_arcsecs,disk_q = None,None
         if bulge_flux > 0:
             if self.ia_angles == True:
-                bulge_q = (1 - np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))/
-                (1+np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))
+                bulge_q = (1 - np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))/(1+np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))
             else:
                 bulge_q = entry['bulge_axis_ratio']
             a_b,b_b = entry['bulge_length']/2,bulge_q*(entry['bulge_length']/2)
