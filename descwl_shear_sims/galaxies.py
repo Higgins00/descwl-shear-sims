@@ -961,7 +961,9 @@ class IAGalaxyBuilder(object):
             if self.ia_angles == True:
                 beta_radians = (np.pi/2) - 0.5*np.arctan2(entry['eps2_gal'],entry['eps1_gal'])
             else:
-                beta_radians = math.radians(entry['disk_angle']) #I believe beta is 0 for the mice catalog need to confirm
+                beta_radians = math.radians(entry['disk_angle'])
+            if np.isnan(beta_radians) == True:
+                beta_radians = math.radians(entry['disk_angle']) 
 #             if bulge_flux > 0:
 #                 assert entry['pa_disk'] == entry['pa_bulge'],'Sersic components have different beta.'
         elif bulge_flux > 0:
@@ -969,14 +971,18 @@ class IAGalaxyBuilder(object):
                 beta_radians = (np.pi/2) - 0.5*np.arctan2(entry['eps2_gal'],entry['eps1_gal'])
             else:
                 beta_radians = math.radians(entry['bulge_angle'])
+            if np.isnan(beta_radians) == True:
+                beta_radians = math.radians(entry['bulge_angle'])
         else:
             # This might happen if we only have an AGN component.
             beta_radians = None
         # Calculate shapes hlr = sqrt(a*b) and q = b/a of Sersic components.
         if disk_flux > 0:
             if self.ia_angles == True:
-                disk_q = (1 - np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))/(1+np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))
+                disk_q = (1 - np.sqrt(entry['eps1_gal']**2 + entry['eps2_gal']**2))/(1+np.sqrt(entry['eps1_gal']**2 + entry['eps2_gal']**2))
             else:
+                disk_q = entry['disk_axis_ratio']
+            if np.isnan(disk_q) ==True:
                 disk_q = entry['disk_axis_ratio']
             a_d,b_d = entry['disk_length']/2,disk_q*(entry['disk_length']/2)
             disk_hlr_arcsecs = math.sqrt(a_d*b_d)
@@ -985,8 +991,10 @@ class IAGalaxyBuilder(object):
             disk_hlr_arcsecs,disk_q = None,None
         if bulge_flux > 0:
             if self.ia_angles == True:
-                bulge_q = (1 - np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))/(1+np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))
+                bulge_q = (1 - np.sqrt(entry['eps1_gal']**2 + entry['eps2_gal']**2))/(1+np.sqrt(entry['eps1_gal']**2 + entry['eps2_gal']**2))
             else:
+                bulge_q = entry['bulge_axis_ratio']
+            if np.isnan(bulge_q) == True:
                 bulge_q = entry['bulge_axis_ratio']
             a_b,b_b = entry['bulge_length']/2,bulge_q*(entry['bulge_length']/2)
             bulge_hlr_arcsecs = math.sqrt(a_b*b_b)
