@@ -804,13 +804,10 @@ class IAGalaxyCatalog(object):
         shifts['dy'] = y[self.im_mask[0]]
 
         self.shifts_array = shifts
-
+        self.ia_angles = ia_angles
         num = len(self)
         self.indices = np.arange(0,len(shifts))
-        if ia_angles == False:
-            self.angles = self.rng.uniform(low=0, high=360, size=num)
-        else:
-            self.angles = np.zeros(num)
+        self.angles = np.zeros(num)
 
     def __len__(self):
         return len(self.shifts_array)
@@ -835,6 +832,7 @@ class IAGalaxyCatalog(object):
             no_bulge=False,
             no_agn=False,
             verbose_model=False,
+            ia_angles = False,
         )
 
         band = survey.filter_band
@@ -910,7 +908,7 @@ class IAGalaxyBuilder(object):
         no_agn(bool): Ignore any PSF-like component in the model if it is present in the catalog.
         verbose_model(bool): Provide verbose output from model building process.
     """
-    def __init__(self,survey,no_disk,no_bulge,no_agn,verbose_model):
+    def __init__(self,survey,no_disk,no_bulge,no_agn,verbose_model,ia_angles):
         if no_disk and no_bulge and no_agn:
             raise RuntimeError('Must build at least one galaxy component.')
         self.survey = survey
@@ -918,6 +916,7 @@ class IAGalaxyBuilder(object):
         self.no_bulge = no_bulge
         self.no_agn = no_agn
         self.verbose_model = verbose_model
+        self.ia_angles = ia_angles
 
     def from_catalog(self,entry,dx_arcsecs,dy_arcsecs,filter_band):
         """Build a :class:Galaxy object from a catalog entry.
@@ -959,24 +958,38 @@ class IAGalaxyBuilder(object):
             raise SourceNotVisible
         # Calculate the position of angle of the Sersic components, which are assumed to be the same.
         if disk_flux > 0:
-            beta_radians = math.radians(0) #I believe beta is 0 for the mice catalog need to confirm
+            if self.ia_angles == True:
+                beta_radians = (np.pi/2) - 0.5*np.arctan2(entry['eps2_gal'],entry['eps1_gal'])
+            else:
+                beta_radians = math.radians(entry['disk_angle']) #I believe beta is 0 for the mice catalog need to confirm
 #             if bulge_flux > 0:
 #                 assert entry['pa_disk'] == entry['pa_bulge'],'Sersic components have different beta.'
         elif bulge_flux > 0:
-            beta_radians = math.radians(0)
+            if self.ia_angles == True:
+                beta_radians = (np.pi/2) - 0.5*np.arctan2(entry['eps2_gal'],entry['eps1_gal'])
+            else:
+                beta_radians = math.radians(entry['bulge_angle'])
         else:
             # This might happen if we only have an AGN component.
             beta_radians = None
         # Calculate shapes hlr = sqrt(a*b) and q = b/a of Sersic components.
         if disk_flux > 0:
-            disk_q = entry['disk_axis_ratio']
+            if self.ia_angles == True:
+                disk_q = (1 - np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))/
+                (1+np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))
+            else:
+                disk_q = entry['disk_axis_ratio']
             a_d,b_d = entry['disk_length']/2,disk_q*(entry['disk_length']/2)
             disk_hlr_arcsecs = math.sqrt(a_d*b_d)
             
         else:
             disk_hlr_arcsecs,disk_q = None,None
         if bulge_flux > 0:
-            bulge_q = entry['bulge_axis_ratio']
+            if self.ia_angles == True:
+                bulge_q = (1 - np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))/
+                (1+np.sqrt(entry['eps1_gal'].values**2 + entry['eps2_gal'].values**2))
+            else:
+                bulge_q = entry['bulge_axis_ratio']
             a_b,b_b = entry['bulge_length']/2,bulge_q*(entry['bulge_length']/2)
             bulge_hlr_arcsecs = math.sqrt(a_b*b_b)
             bulge_beta = math.radians(0)#0 I believe for IA sims
