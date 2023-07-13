@@ -832,7 +832,7 @@ class IAGalaxyCatalog(object):
             no_bulge=False,
             no_agn=False,
             verbose_model=False,
-            ia_angles = False,
+            ia_angles = self.ia_angles,
         )
 
         band = survey.filter_band
